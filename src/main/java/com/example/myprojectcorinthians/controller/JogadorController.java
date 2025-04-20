@@ -2,6 +2,7 @@ package com.example.myprojectcorinthians.controller;
 import com.example.myprojectcorinthians.entity.Jogador;
 import com.example.myprojectcorinthians.repository.JogadorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,8 +14,9 @@ public class JogadorController {
     private JogadorRepository jogadorRepository;
 
     @PostMapping
-    public Jogador criarJogador(@RequestBody Jogador jogador) {
-        return jogadorRepository.save(jogador);
+    public ResponseEntity<String> criarJogador(@RequestBody Jogador jogador) {
+        Jogador salvo = jogadorRepository.save(jogador);
+        return ResponseEntity.ok("Jogador " + salvo.getNome() + " cadastrado com sucesso!");
     }
 
     @GetMapping
@@ -35,14 +37,14 @@ public class JogadorController {
     }
 
     @PutMapping("/{id}")
-    public Jogador atualizarJogador(@RequestBody Jogador novoJogador, @PathVariable Long id) {
+    public ResponseEntity<String> atualizarJogador(@RequestBody Jogador novoJogador, @PathVariable Long id) {
         return jogadorRepository.findById(id).map(jogador -> {
             jogador.setNome(novoJogador.getNome());
             jogador.setPosicao(novoJogador.getPosicao());
-            jogador.setId(novoJogador.getId());
             jogador.setNumeroCamisa(novoJogador.getNumeroCamisa());
             jogador.setSalario(novoJogador.getSalario());
-            return jogadorRepository.save(jogador);
+            jogadorRepository.save(jogador);
+            return ResponseEntity.ok("Jogador " + jogador.getNome() + " atualizado com sucesso!");
         }).orElseThrow(() -> new RuntimeException("Jogador não encontrado com o id: " + id));
     }
 
